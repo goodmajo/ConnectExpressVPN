@@ -9,7 +9,7 @@
 #include <cstdlib>
 #include <string>
 #include <memory>
-#include <vector>
+#include <array>
 
 
 int main()
@@ -22,17 +22,25 @@ int main()
 
     /* Credit for the code below that gets command output belongs to gregpaton08 on SO (https://bit.ly/3iMTppU).
      * I've been using this solution for years now and it always works perfectly. Thanks, Greg! */
-    std::vector<char> buffer;
-    buffer.reserve(subStrLen);
+    //std::vector<char> buffer;
+    //buffer.reserve(subStrLen);
+
+    std::array<char,subStrLen> buffer;
 
     std::string result;
     result.reserve(subStrLen);
 
     std::unique_ptr<std::FILE,decltype(&pclose)> pipe(popen(statusCommand, "r"), pclose);
-    if (!pipe)
+    if(!pipe)
         throw std::runtime_error("popen() failed!");
-    while (fgets(buffer.data(), subStrLen, pipe.get()) != nullptr)
-        result += buffer.data();
+    
+    for(unsigned int i = 0 ; i < subStrLen ; ++i)
+    {
+        fgets(buffer.data(), subStrLen, pipe.get());
+	result += buffer.data();
+    }
+    //while(fgets(buffer.data(), subStrLen, pipe.get()))
+        //result += buffer.data();
 
     const bool connected = (result.substr(0,subStrLen) == notConnectedSubStr) ? false : true;
 
