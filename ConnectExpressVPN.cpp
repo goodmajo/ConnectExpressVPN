@@ -16,7 +16,7 @@ int main()
 {
     constexpr const char* vpnConnectCommand    = "expressvpn connect smart";
     constexpr const char* vpnDisconnectCommand = "expressvpn disconnect";
-    constexpr const char* notConnectedSubStr   = "Not";	/* This is a substring we check for to tell whether or not vpn is connected. */     
+    constexpr const char* notConnectedSubStr   = "Not connected";	/* This is a substring we check for to tell whether or not vpn is connected. */     
     constexpr const char* statusCommand        = "expressvpn status";
     constexpr size_t subStrLen	               = strlen(notConnectedSubStr);
 
@@ -34,10 +34,12 @@ int main()
     for(unsigned int i = 0 ; i < subStrLen ; ++i)
     {
         fgets(buffer.data(), subStrLen, pipe.get());
-	result += buffer.data();
+        result += buffer.data();
     }
 
-    const bool connected = (result.substr(0,subStrLen) == notConnectedSubStr) ? false : true;
+    const size_t pos = result.find(notConnectedSubStr);
+    const bool connected = (pos == std::string::npos);
+
 
     if(connected)
     {
